@@ -1,0 +1,17 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.selflabbs/package-intel-mcp",
+  "title": "Package Intel MCP",
+  "description": "Package intelligence for AI agents across npm, PyPI, crates.io and deps.dev. No API keys.",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/selflabbs/package-intel-mcp",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://package.selflabbs.com/mcp"
+    }
+  ]
+}
