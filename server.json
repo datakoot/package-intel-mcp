@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.datakoot/npm-pypi-crates-packages",
+  "name": "com.datakoot/npm-pypi-crates-packages",
   "title": "Package Intel MCP",
   "description": "Package intelligence for AI agents across npm, PyPI, crates.io and deps.dev. No API keys.",
   "version": "2.1.0",
