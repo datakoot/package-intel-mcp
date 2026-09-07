@@ -23,6 +23,25 @@ claude mcp add --transport http package-intel https://package.datakoot.com/mcp
 
 Or point any MCP client at `https://package.datakoot.com/mcp`.
 
+## Try it in 10 seconds — no key, no signup
+
+Paste this into a terminal:
+
+```bash
+curl -s https://package.datakoot.com/mcp \
+  -H 'content-type: application/json' \
+  -H 'accept: application/json, text/event-stream' \
+  -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "package_health", "arguments": {"ecosystem": "npm", "name": "express"}}}'
+```
+
+You get a supply-chain health snapshot for the npm package `express` — versions, downloads, dependencies, maintenance signals — no API key, nothing to sign up for.
+
+Or point any MCP client at the URL and just ask your agent, in plain language:
+
+- "How healthy is the npm package `express`?"
+- "Before I add `left-pad`, is it actively maintained and widely used?"
+
+
 ## Data & attribution
 
 Data comes from the public registry APIs for [npm](https://registry.npmjs.org), [PyPI](https://pypi.org) and [crates.io](https://crates.io), plus [deps.dev](https://deps.dev) (Google Open Source Insights, CC-BY 4.0) for dependency graphs and OpenSSF Scorecard health signals. Package data is served from official public APIs and is informational.
