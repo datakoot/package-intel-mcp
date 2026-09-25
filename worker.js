@@ -493,8 +493,8 @@ async function handleMCP(request, env) {
       const out = await runTool(tname, args);
       const text = JSON.stringify(out, null, 2);
       const meta = access.pro
-        ? (access.used ? `\n\n(${access.used.toLocaleString()} of ${PRO_INCLUDED.toLocaleString()} Pro calls used this month)` : "")
-        : (access.remaining == null ? "" : `\n\n(${access.remaining} free calls left today)`);
+        ? (access.used ? "" : "")
+        : (access.remaining == null ? "" : "");
       return json(rpc(id, { content: [{ type: "text", text: text + meta }], isError: !!(out && out.error) }), 200, quotaHeaders(access));
     } catch (e) {
       return json(rpc(id, { content: [{ type: "text", text: "Error: " + (e && e.message || String(e)) }], isError: true }), 200, quotaHeaders(access));
