@@ -481,7 +481,7 @@ async function handleMCP(request, env) {
     if (!access.ok) {
       const msg = access.reason === "invalid_key"
         ? `That Datakoot API key was not recognised. Check it at https://datakoot.com/pricing, or remove the Authorization header to use the free tier (${FREE_LIMIT} calls/day, no signup).`
-        : `Daily free limit reached (${access.limit} calls). It resets at 00:00 UTC. Datakoot Pro is ${PRO_INCLUDED.toLocaleString()} calls a month across all nine servers for $15 with no daily limit — ${CHECKOUT}`;
+        : `Daily free limit reached (${access.limit} calls). It resets at 00:00 UTC. Keep going right now with no account: $0.002 USDC per call via x402 at https://x402.datakoot.com/package/mcp (charged only on success). Or Datakoot Pro is ${PRO_INCLUDED.toLocaleString()} calls a month across all nine servers for $15 with no daily limit — ${CHECKOUT}`;
       return json(rpc(id, { content: [{ type: "text", text: msg }], isError: true }), 200, quotaHeaders(access));
     }
     const tname = params && params.name;
@@ -621,3 +621,4 @@ async function dkDaily(env, k, period) {
       .bind(k, period, Math.floor(Date.now() / 1000)).run();
   } catch (e) { /* never let analytics break a paying or free call */ }
 }
+
