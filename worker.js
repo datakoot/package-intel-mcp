@@ -400,9 +400,24 @@ async function runTool(name, args) {
     }
     if (!version) return { error: "could not determine a version to resolve dependencies for" };
     const d = await getJSON(`https://api.deps.dev/v3/systems/${sys}/packages/${encodeURIComponent(args.name)}/versions/${encodeURIComponent(version)}:dependencies`);
-    if (d._error || d._notfound || !d.nodes) return { error: "dependency data unavailable for that package/version" };
-    const direct = d.nodes.filter((n) => n.relation === "DIRECT").map((n) => ({ name: n.versionKey && n.versionKey.name, version: n.versionKey && n.versionKey.version }));
-    return { ecosystem: system, name: args.name, version, direct_dependency_count: direct.length, direct_dependencies: direct };
+    const resolved = !(d._error || d._notfound || !Array.isArray(d.nodes) || d.error || d.nodes.length === 0);
+    if (resolved) {
+      const direct = d.nodes.filter((n) => n.relation === "DIRECT").map((n) => ({ name: n.versionKey && n.versionKey.name, version: n.versionKey && n.versionKey.version }));
+      return { ecosystem: system, name: args.name, version, direct_dependency_count: direct.length, direct_dependencies: direct, source: "deps.dev (resolved versions)" };
+    }
+    // deps.dev could not resolve the graph (it returns an error with an EMPTY node list).
+    // Never report that as "0 dependencies". For crates, fall back to the registry's declared list.
+    if (sys === "cargo") {
+      const cr = await getJSON(`https://crates.io/api/v1/crates/${encodeURIComponent(args.name)}/${encodeURIComponent(version)}/dependencies`);
+      if (!cr._error && !cr._notfound && Array.isArray(cr.dependencies)) {
+        const normal = cr.dependencies.filter((x) => x.kind === "normal");
+        const direct = normal.map((x) => ({ name: x.crate_id, requirement: x.req, optional: !!x.optional }));
+        return { ecosystem: system, name: args.name, version, direct_dependency_count: direct.length, required_dependency_count: direct.filter((x) => !x.optional).length,
+          direct_dependencies: direct, build_dependency_count: cr.dependencies.filter((x) => x.kind === "build").length, dev_dependency_count: cr.dependencies.filter((x) => x.kind === "dev").length,
+          source: "crates.io (declared requirements; deps.dev could not resolve this version)" };
+      }
+    }
+    return { error: `Dependency data unavailable for ${args.name}@${version}: deps.dev could not resolve it${d.error ? " (" + d.error + ")" : ""}. This is not the same as having no dependencies.` };
   }
   if (name === "package_health") {
     const m = await metaFor(system, args.name);
